@@ -28,4 +28,4 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
         run: |          
           find . build/site -type f
-          netlify deploy --dir=build/site --prod
+          netlify deploy --dir=build/site --functions=netlify/functions --prod

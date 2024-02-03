@@ -1,6 +1,6 @@
 .Phony: build
 build: prep
-	go build -o build/site/netlify/functions/. ./cmds/parseopml
+	GOOS=linux GOARCH=amd64 go build -o build/site/netlify/functions/. ./cmds/parseopml
 	cp -r web/* build/site/.
 
 .Phony: clean
