@@ -21,7 +21,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer opmlBodyFile.Close()
 
-	if opmlHeader.Header.Get("Content-type") != "application/xml" {
+	if opmlHeader.Header.Get("Content-type") != "text/xml" {
 		http.Error(w, "expected XML file", http.StatusBadRequest)
 		return
 	}
