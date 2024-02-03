@@ -13,9 +13,10 @@ import (
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
 	opmlBodyFile, opmlHeader, err := r.FormFile("opml")
 	if err != nil {
-		http.Error(w, "cannot read OPML file", http.StatusBadRequest)
+		http.Error(w, "cannot read OPML file: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 	defer opmlBodyFile.Close()
