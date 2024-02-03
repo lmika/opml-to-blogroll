@@ -14,7 +14,7 @@
 <main>
     <p>Convert an OPML file of your RSS subscriptions into a Markdown file.</p>
 
-    <form method="post" action="/.netlify/functions/parseopml">
+    <form method="post" action="/.netlify/functions/parseopml" enctype="multipart/form-data">
         <p>
             <label for="opml">OPML File:</label>
             <input type="file" accept="application/xml" name="opml" id="opml">
