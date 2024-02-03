@@ -1,27 +1,40 @@
 package main
 
 import (
+	"bytes"
 	"encoding/xml"
-	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/awslabs/aws-lambda-go-api-proxy/httpadapter"
 	"github.com/lmika/gopkgs/fp/slices"
 	"github.com/lmika/opml-to-blogroll/models"
+	"io"
 	"net/http"
 	"strings"
 )
 
-func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
-	opmlBody := request.Body
+func handler(w http.ResponseWriter, r *http.Request) {
+	opmlBodyFile, opmlHeader, err := r.FormFile("opml")
+	if err != nil {
+		http.Error(w, "cannot read OPML file", http.StatusBadRequest)
+		return
+	}
+	defer opmlBodyFile.Close()
+
+	if opmlHeader.Header.Get("Content-type") != "application/xml" {
+		http.Error(w, "expected XML file", http.StatusBadRequest)
+		return
+	}
+
+	opmlBodyBytes, err := io.ReadAll(opmlBodyFile)
+	if err != nil {
+		http.Error(w, "cannot read OPML file", http.StatusInternalServerError)
+		return
+	}
 
 	var opml models.OPML
-	if err := xml.NewDecoder(strings.NewReader(opmlBody)).Decode(&opml); err != nil {
-		return &events.APIGatewayProxyResponse{
-			StatusCode: http.StatusBadRequest,
-			Headers: map[string]string{
-				"Content-type": "text/plain; encoding=utf-8",
-			},
-			Body: err.Error(),
-		}, nil
+	if err := xml.NewDecoder(bytes.NewReader(opmlBodyBytes)).Decode(&opml); err != nil {
+		http.Error(w, "invalid XML file", http.StatusBadRequest)
+		return
 	}
 
 	feedItems := opml.FeedItems()
@@ -29,15 +42,11 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 		return "- " + fi.Title
 	}), "\n")
 
-	return &events.APIGatewayProxyResponse{
-		StatusCode: http.StatusOK,
-		Headers: map[string]string{
-			"Content-type": "text/plain; encoding=utf-8",
-		},
-		Body: feedTitles,
-	}, nil
+	w.Header().Set("Content-type", "text/plain; encoding=utf-8")
+	w.WriteHeader(http.StatusOK)
+	io.WriteString(w, feedTitles)
 }
 
 func main() {
-	lambda.Start(handler)
+	lambda.Start(httpadapter.New(http.HandlerFunc(handler)).ProxyWithContext)
 }
