@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func handler(request events.APIGatewayProxyRequest) *events.APIGatewayProxyResponse {
+func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 	opmlBody := request.Body
 
 	var opml models.OPML
@@ -21,7 +21,7 @@ func handler(request events.APIGatewayProxyRequest) *events.APIGatewayProxyRespo
 				"Content-type": "text/plain; encoding=utf-8",
 			},
 			Body: err.Error(),
-		}
+		}, nil
 	}
 
 	feedItems := opml.FeedItems()
@@ -35,7 +35,7 @@ func handler(request events.APIGatewayProxyRequest) *events.APIGatewayProxyRespo
 			"Content-type": "text/plain; encoding=utf-8",
 		},
 		Body: feedTitles,
-	}
+	}, nil
 }
 
 func main() {
