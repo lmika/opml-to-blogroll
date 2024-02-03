@@ -10,12 +10,18 @@ import (
 	"strings"
 )
 
-func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
+func handler(request events.APIGatewayProxyRequest) *events.APIGatewayProxyResponse {
 	opmlBody := request.Body
 
 	var opml models.OPML
 	if err := xml.NewDecoder(strings.NewReader(opmlBody)).Decode(&opml); err != nil {
-		return nil, err
+		return &events.APIGatewayProxyResponse{
+			StatusCode: http.StatusBadRequest,
+			Headers: map[string]string{
+				"Content-type": "text/plain; encoding=utf-8",
+			},
+			Body: err.Error(),
+		}
 	}
 
 	feedItems := opml.FeedItems()
@@ -29,7 +35,7 @@ func handler(request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResp
 			"Content-type": "text/plain; encoding=utf-8",
 		},
 		Body: feedTitles,
-	}, nil
+	}
 }
 
 func main() {
