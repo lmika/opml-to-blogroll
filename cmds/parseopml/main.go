@@ -1,4 +1,4 @@
-package parseopml
+package main
 
 import (
 	"encoding/xml"
