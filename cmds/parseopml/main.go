@@ -5,11 +5,10 @@ import (
 	"encoding/xml"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/awslabs/aws-lambda-go-api-proxy/httpadapter"
-	"github.com/lmika/gopkgs/fp/slices"
 	"github.com/lmika/opml-to-blogroll/models"
+	"github.com/lmika/opml-to-blogroll/renderer"
 	"io"
 	"net/http"
-	"strings"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -39,13 +38,16 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	feedItems := opml.FeedItems()
-	feedTitles := strings.Join(slices.Map(feedItems, func(fi *models.Outline) string {
-		return "- " + fi.Title
-	}), "\n")
 
-	w.Header().Set("Content-type", "text/plain; encoding=utf-8")
+	var bfr bytes.Buffer
+	if err := renderer.Outlines(&bfr, feedItems); err != nil {
+		http.Error(w, "cannot render template", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-type", "text/html; encoding=utf-8")
 	w.WriteHeader(http.StatusOK)
-	io.WriteString(w, feedTitles)
+	io.Copy(w, &bfr)
 }
 
 func main() {
