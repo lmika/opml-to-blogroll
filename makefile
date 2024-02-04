@@ -11,3 +11,7 @@ clean:
 prep: clean
 	mkdir -p build/site
 	mkdir -p build/site/netlify/functions
+
+.Phony: run
+run:
+	( cd web ; python3 -m http.server )

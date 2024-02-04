@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <title>OPML to Blogroll</title>
+</head>
+<body>
+<header>
+    <h1>OPML to Blogroll</h1>
+</header>
+
+<main>
+    <h1>FAQ</h1>
+
+    <p><b>What's OPML?</b></p>
+    <p>OPML, or <a href="https://en.wikipedia.org/wiki/OPML">Outline Processor Markup Language</a> is an XML-like language
+        commonly used to encode a bunch of RSS subscriptions. In most feed readers, like
+        Feedbin or NetNewsWire, have an option to export their subscriptions in the format, so they could be imported into
+        other feed readers.
+    </p>
+    <p><b>What a Blogroll?</b></p>
+    <p>A <a href="https://en.wiktionary.org/wiki/blogroll">blogrroll</a> is a collection of to other blogs or sites that a blogger recommends.
+    </p>
+    <p><b>Where does my OPML file go?</b></p>
+    <p>It'll go to a Netlify function to be parsed and converted into a HTML file. I suppose, if I was a better JavaScript
+        programmer, it would've been possible to do it in the browser. But it's easier for me to use Go for this.
+    </p>
+    <p><b>Is my OPML file stored anywhere?</b></p>
+    <p>Absolutely not. The OPML file is used only to generate the HTML snippet, and then forgot about. It may be stored
+        on disk temporarily, but that's just to assist with handling the request (small OPML files should only ever be stored
+        in memory).
+    </p> 
+    <p><b>How big can my OPML file be?</b></p>
+    <p>
+        Your OPML file can be up to 10 MB. In order to prevent possible issues with large files, only the first
+        1000 feed items will be included in the output, and we'll only go into groups up to 10 levels deep (you can have
+        as many groups as you like though).
+    </p>
+    <p><b>I seam to recall this being a bit of a thing back in the 2000's. Are people still doing this?</b></p>
+    <p>Absolutely. In fact, people never stopped doing this. It has seen a bit of a resurgence in recent years though,
+        thanks to the imposion of certain social networks and people rediscovering the magic of blogging and RSS.
+    </p>
+    <p><b>Help, I tried uploading an OPML file and it didn't work for me.</b></p>
+    <p>I'm sorry to hear that. The best thing I can suggest is maybe trying again, and just making sure that what you're trying
+        to upload is a proper OPML file (it'll look like an XML file). If that's still not working for you, feel free to
+        <a href="https://github.com/lmika/opml-to-blogroll/issues">raise an issue</a> and I can look at it when I get the chance
+        (this is just some fun so I can't promise a speedy turnaround time).
+    </p>
+</main>
+
+<footer>By <a href="https://leonmika.com">Leon Mika</a>. Using <a href="https://simplecss.org">simplecss</a> and <a href="https://stephango.com/flexoki">Flexoki</a>.
+</footer>
+</body>
+</html>

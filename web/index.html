@@ -12,7 +12,14 @@
 </header>
 
 <main>
-    <p>Convert an OPML file of your RSS subscriptions into a Markdown file.</p>
+    <p>Convert an OPML file of your RSS subscriptions into an HTML file to use as a blogroll.</p>
+    <p>To use:</p>
+    <ol>
+        <li>Export your RSS subscriptions as an OPML file</li>
+        <li>Upload your OPML file</li>
+        <li>Copy the generated HTML file and include it in your blog</li>
+    </ol>
+    <p>Questions? Concerns? Please take a look at the <a href="/faq.html">FAQ</a>.</p>
 
     <form method="post" action="/.netlify/functions/parseopml" enctype="multipart/form-data">
         <p>
@@ -25,8 +32,7 @@
     </form>
 </main>
 
-<footer>
-    <p>Attribution goes here</p>
+<footer>By <a href="https://leonmika.com">Leon Mika</a>. Using <a href="https://simplecss.org">simplecss</a> and <a href="https://stephango.com/flexoki">Flexoki</a>.
 </footer>
 </body>
 </html>
