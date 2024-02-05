@@ -6,22 +6,16 @@ import (
 	"github.com/lmika/opml-to-blogroll/models"
 	"html/template"
 	"io"
-	"sort"
-	"strings"
 )
 
 //go:embed result.gohtml feeditems.gohtml
 var resultTemplate embed.FS
 
-func Outlines(w io.Writer, outlines []*models.Outline) error {
+func Outlines(w io.Writer, outlines []models.FeedItem) error {
 	tmpl, err := template.ParseFS(resultTemplate, "*.gohtml")
 	if err != nil {
 		return err
 	}
-
-	sort.Slice(outlines, func(i, j int) bool {
-		return strings.ToLower(outlines[i].Title) < strings.ToLower(outlines[j].Title)
-	})
 
 	var feedItems bytes.Buffer
 	if err := tmpl.ExecuteTemplate(&feedItems, "feeditems.gohtml", map[string]any{

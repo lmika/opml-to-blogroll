@@ -1,6 +1,11 @@
 package models
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"github.com/lmika/gopkgs/fp/maps"
+	"sort"
+	"strings"
+)
 
 const (
 	maxFeedItems  = 1000
@@ -14,10 +19,10 @@ type OPML struct {
 	Body    []*Outline `xml:"body>outline"`
 }
 
-func (o OPML) FeedItems() []*Outline {
+func (o OPML) FeedItems() []FeedItem {
 	var fic feedItemCollector
 	o.addFeedItem(&fic)
-	return fic.outline
+	return fic.sortAndDedupe()
 }
 
 func (o OPML) addFeedItem(fic *feedItemCollector) {
@@ -43,6 +48,12 @@ type Outline struct {
 	HTMLUrl string `xml:"htmlUrl,attr"`
 
 	Children []*Outline `xml:"outline"`
+}
+
+type FeedItem struct {
+	Title   string
+	XMLUrl  string
+	HTMLUrl string
 }
 
 func (o *Outline) isFeedItem() bool {
@@ -74,4 +85,26 @@ func (fic *feedItemCollector) add(o *Outline) bool {
 	}
 	fic.outline = append(fic.outline, o)
 	return true
+}
+
+func (fic *feedItemCollector) sortAndDedupe() []FeedItem {
+	urlsSeen := make(map[string]FeedItem)
+
+	for _, o := range fic.outline {
+		u := strings.ToLower(strings.TrimSpace(o.HTMLUrl))
+		if _, ok := urlsSeen[u]; !ok {
+			urlsSeen[u] = FeedItem{
+				Title:   strings.TrimSpace(o.Title),
+				HTMLUrl: strings.TrimSpace(o.HTMLUrl),
+				XMLUrl:  strings.TrimSpace(o.XMLUrl),
+			}
+		}
+	}
+
+	feedItems := maps.Values(urlsSeen)
+	sort.Slice(feedItems, func(i, j int) bool {
+		return strings.ToLower(feedItems[i].Title) < strings.ToLower(feedItems[j].Title)
+	})
+
+	return feedItems
 }
