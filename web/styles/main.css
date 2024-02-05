@@ -20,3 +20,17 @@ div.buttons {
     grid-column-start: 2;
     grid-column-end: 2;
 }
+
+
+#copy-indicator {
+    display: none;
+    margin-inline-start: 10px;
+}
+
+#copy-indicator.show {
+    display: inline-block;
+}
+
+.hidden {
+    display: none;
+}

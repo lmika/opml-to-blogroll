@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <link rel="stylesheet" href="/styles/main.css">
     <title>OPML to Blogroll</title>
 </head>
 <body>
@@ -14,12 +15,17 @@
 <main>
     <p>Here are your subscriptions as HTML:</p>
 
-    <pre><code>{{.Output}}</code></pre>
+    <p>
+        <button id="copy-output" class="hidden">Copy</button>
+        <span id="copy-indicator" class="hidden">Copied</span>
+    </p>
 
+    <pre><code id="output">{{.Output}}</code></pre>
+
+    <script src="/web/scripts/output.js" defer></script>
 </main>
 
-<footer>
-    <p>Attribution goes here</p>
+<footer>By <a href="https://leonmika.com">Leon Mika</a>. Using <a href="https://simplecss.org">simplecss</a> and <a href="https://stephango.com/flexoki">Flexoki</a>.
 </footer>
 </body>
 </html>
