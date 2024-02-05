@@ -1,0 +1,22 @@
+div.fields {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    column-gap: 10px;
+
+    margin-inline-start: 5vw;
+    margin-inline-end: 5vw;
+}
+
+label {
+    font-weight: bold;
+}
+
+input[type="file"] {
+    background: none;
+}
+
+div.buttons {
+    grid-column-start: 2;
+    grid-column-end: 2;
+}

@@ -2,6 +2,11 @@ package models
 
 import "encoding/xml"
 
+const (
+	maxFeedItems  = 1000
+	maxGroupDepth = 10
+)
+
 type OPML struct {
 	XMLName xml.Name   `xml:"opml"`
 	Version string     `xml:"version,attr"`
@@ -10,14 +15,20 @@ type OPML struct {
 }
 
 func (o OPML) FeedItems() []*Outline {
-	outlines := make([]*Outline, 0)
+	var fic feedItemCollector
+	o.addFeedItem(&fic)
+	return fic.outline
+}
+
+func (o OPML) addFeedItem(fic *feedItemCollector) {
 	for _, o := range o.Body {
 		if o.isFeedItem() {
-			outlines = append(outlines, o)
+			if !fic.add(o) {
+				return
+			}
 		}
-		outlines = append(outlines, o.feedItems()...)
+		o.feedItems(fic, 1)
 	}
-	return outlines
 }
 
 type Head struct {
@@ -38,13 +49,29 @@ func (o *Outline) isFeedItem() bool {
 	return o.Type == "rss"
 }
 
-func (o Outline) feedItems() []*Outline {
-	outlines := make([]*Outline, 0)
+func (o Outline) feedItems(fic *feedItemCollector, depth int) {
+	if depth >= maxGroupDepth {
+		return
+	}
+
 	for _, o := range o.Children {
 		if o.isFeedItem() {
-			outlines = append(outlines, o)
+			if !fic.add(o) {
+				return
+			}
 		}
-		outlines = append(outlines, o.feedItems()...)
+		o.feedItems(fic, depth+1)
 	}
-	return outlines
+}
+
+type feedItemCollector struct {
+	outline []*Outline
+}
+
+func (fic *feedItemCollector) add(o *Outline) bool {
+	if len(fic.outline) >= maxFeedItems {
+		return false
+	}
+	fic.outline = append(fic.outline, o)
+	return true
 }

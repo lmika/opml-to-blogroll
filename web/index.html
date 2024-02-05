@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <link rel="stylesheet" href="/styles/main.css">
     <title>OPML to Blogroll</title>
 </head>
 <body>
@@ -13,6 +14,18 @@
 
 <main>
     <p>Convert an OPML file of your RSS subscriptions into an HTML file to use as a blogroll.</p>
+
+    <form method="post" action="/.netlify/functions/parseopml" enctype="multipart/form-data">
+        <div class="notice fields">
+            <label for="opml">OPML File:</label>
+            <input type="file" accept="application/xml" name="opml" id="opml">
+
+            <div class="buttons">
+                <input type="submit" value="Convert">
+            </div>
+        </div>
+    </form>
+
     <p>To use:</p>
     <ol>
         <li>Export your RSS subscriptions as an OPML file</li>
@@ -20,16 +33,6 @@
         <li>Copy the generated HTML file and include it in your blog</li>
     </ol>
     <p>Questions? Concerns? Please take a look at the <a href="/faq.html">FAQ</a>.</p>
-
-    <form method="post" action="/.netlify/functions/parseopml" enctype="multipart/form-data">
-        <p>
-            <label for="opml">OPML File:</label>
-            <input type="file" accept="application/xml" name="opml" id="opml">
-        </p>
-        <p>
-            <input type="submit" value="Convert">
-        </p>
-    </form>
 </main>
 
 <footer>By <a href="https://leonmika.com">Leon Mika</a>. Using <a href="https://simplecss.org">simplecss</a> and <a href="https://stephango.com/flexoki">Flexoki</a>.
