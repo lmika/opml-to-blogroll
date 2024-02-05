@@ -12,12 +12,12 @@ if (!!navigator.clipboard) {
         let outputInnerText = outputElem.innerHTML;
 
         try {
-            await navigator.clipboard.write(outputInnerText);
+            await navigator.clipboard.writeText(outputInnerText);
             showCopyIndicator("Copied");
         } catch (e) {
             console.log(e);
-            if (e instanceof NotAllowedError) {
-                showCopyIndicator("Page not permitted to use clipboard");
+            if (e instanceof DOMException) {
+                showCopyIndicator(`Clipboard access not available: ${e.name}`);
             } else {
                 showCopyIndicator("Unknown error");
             }
