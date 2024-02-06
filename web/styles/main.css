@@ -1,3 +1,21 @@
+:root {
+    --accent-bg: rgb(240, 244, 221);
+    --border: rgb(158, 164, 137);
+    --accent: rgb(100, 114, 42);
+    --accent-hover: rgb(136, 159, 44);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root,
+    ::backdrop {
+        --accent-bg: rgb(45, 52, 19);
+        --border: rgb(158, 164, 137);
+        --accent: rgb(100, 114, 42);
+        --accent-hover: rgb(136, 159, 44);
+        --accent-text: var(--text);
+    }
+}
+
 div.fields {
     display: grid;
     grid-template-columns: auto 1fr;

@@ -10,10 +10,15 @@
 <body>
 <header>
     <h1>OPML to Blogroll</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="https://github.com/lmika/opml-to-blogroll">Github</a>
+    </nav>
 </header>
 
 <main>
-    <p>Convert an OPML file of your RSS subscriptions into an HTML file to use as a blogroll.</p>
+    <p>Converts an OPML file of your RSS subscriptions into an HTML snippet. Useful for making a blogroll.</p>
 
     <form method="post" action="/.netlify/functions/parseopml" enctype="multipart/form-data">
         <div class="notice fields">
@@ -26,7 +31,7 @@
         </div>
     </form>
 
-    <p>To use:</p>
+    <h4>To Use</h4>
     <ol>
         <li>Export your RSS subscriptions as an OPML file</li>
         <li>Upload your OPML file</li>
