@@ -3,15 +3,20 @@ package main
 import (
 	"bytes"
 	"encoding/xml"
+	"io"
+	"log"
+	"mime/multipart"
+	"net/http"
+	"path/filepath"
+	"strings"
+
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/awslabs/aws-lambda-go-api-proxy/httpadapter"
 	"github.com/lmika/opml-to-blogroll/models"
 	"github.com/lmika/opml-to-blogroll/renderer"
-	"io"
-	"net/http"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func Handler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	opmlBodyFile, opmlHeader, err := r.FormFile("opml")
 	if err != nil {
@@ -20,7 +25,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer opmlBodyFile.Close()
 
-	if opmlHeader.Header.Get("Content-type") != "text/xml" {
+	// Unless the file extension is .xml, we cannot rely on the content-type. It may be one of
+	// the other extension types.
+	if !looksLikeValidOPMLFile(opmlHeader) {
+		log.Printf("received unrecognised opml file: filename=%v, mimetype=%v", opmlHeader.Filename, opmlHeader.Header.Get("Content-type"))
 		http.Error(w, "expected XML file", http.StatusBadRequest)
 		return
 	}
@@ -51,5 +59,23 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	lambda.Start(httpadapter.New(http.HandlerFunc(handler)).ProxyWithContext)
+	lambda.Start(httpadapter.New(http.HandlerFunc(Handler)).ProxyWithContext)
+}
+
+func looksLikeValidOPMLFile(h *multipart.FileHeader) bool {
+	contentType, _, _ := strings.Cut(h.Header.Get("Content-type"), ";")
+	contentType = strings.TrimSpace(strings.ToLower(contentType))
+
+	if contentType == "application/xml" ||
+		contentType == "text/xml" ||
+		contentType == "text/x-opml" {
+		return true
+	}
+
+	ext := strings.ToLower(filepath.Ext(h.Filename))
+	if contentType == "application/octet-stream" && (ext == ".xml" || ext == ".opml") {
+		return true
+	}
+
+	return false
 }
